@@ -3,6 +3,7 @@ import sys
 import platform
 import sched
 import time
+from time import sleep
 from twilio.rest import Client
 import pyrebase
 import pygame
@@ -19,7 +20,6 @@ from ctypes import *
 ## Above is module imports
 
 ## Programmed by Royce Aquino / copyright 2017
-## This is programmed on PC and sent to beaglebone
 
 ## Code edited using PyCharm Community Edition then pushed to GitHub
 ## Dec 3, 2017
@@ -81,6 +81,21 @@ class SysMessage:
             "create_date" : self.create_date
         }
         return jsondata
+
+
+## Class used for pixycam blocks
+class Blocks (Structure):
+  _fields_ = [ ("type", c_uint),
+               ("signature", c_uint),
+               ("x", c_uint),
+               ("y", c_uint),
+               ("width", c_uint),
+               ("height", c_uint),
+               ("angle", c_uint) ]
+
+
+blocks = BlockArray(100)
+frame = 0
 
 ## Next time these will just be local variables
 global a_user_data
@@ -297,3 +312,22 @@ print("The system will now settup and inititate correctly...")
 print("To exit out of working condition, input ctrl + z or type qs .")
 
 ## Now here we will test the pixycam.
+
+## Testing pixycam
+print("Now testing pixycam interrupt service...")
+# Initialize Pixy Interpreter thread #
+pixy_init()
+
+# Wait for blocks #
+while 1:
+    ## Need to sleep for 25 miliseconds
+    sleep(0.25)
+    count = pixy_get_blocks(100, blocks)
+
+    if count > 0:
+        # Blocks found #
+        print("Person detected!")
+        print 'frame %3d:' % (frame)
+        frame = frame + 1
+        for index in range (0, count):
+            print 'type = %d, signature = %d' % (blocks[index].type, blocks[index].signature,)
