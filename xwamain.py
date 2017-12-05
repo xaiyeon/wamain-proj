@@ -327,7 +327,9 @@ while 1:
     if count > 0:
         # Blocks found #
         print("Person detected!")
-        print 'frame %3d:' % (frame)
+        print("frame %3d:" % (frame))
         frame = frame + 1
         for index in range (0, count):
-            print 'type = %d, signature = %d' % (blocks[index].type, blocks[index].signature,)
+            print("type = %d, signature = %d" % (blocks[index].type, blocks[index].signature))
+
+
