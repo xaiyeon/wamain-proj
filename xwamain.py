@@ -124,12 +124,12 @@ class Wamain_User:
         print("To create a user, please input answers for these parameters for your system.")
         print("To use the system, you must log-in with the account you verified using the application.")
         return cls(
-            raw_input('Name for this system account: '),
+            input('Name for this system account: '),
             time.asctime(time.localtime(time.time())),
-            raw_input('Name This Location: '),
-            raw_input('Your WA Photo Recon login E-mail: '),
-            raw_input('Your WA Photo Recon login Password: '),
-            raw_input('Cell Phone Number (ex: +16190010004): '),
+            input('Name This Location: '),
+            input('Your WA Photo Recon login E-mail: '),
+            input('Your WA Photo Recon login Password: '),
+            input('Cell Phone Number (ex: +16190010004): '),
             str(os.uname()[0]) + ", " + str(os.uname()[1]) + ", " + str(os.uname()[2]) + ", " + str(
                 os.uname()[3]) + ", " + str(os.uname()[4]),
             "empty"
@@ -468,7 +468,7 @@ if check_devices_connection():
 else:
     print("Please fix the errors above and make sure your device is set-up correctly!")
     print("")
-    fail = raw_input('Enter to quit program and try again: ')
+    fail = input('Enter to quit program and try again: ')
     # We quit the program or exit.
     print("Quitting...")
     sys.exit(0)
@@ -535,8 +535,10 @@ print("The test demo took: " + str(elapsed_demo_time) + " seconds!")
 # This is the infinite loop for the system, to cancel just quit from the program or un-plug the power.
 # We will start a timer, we will refresh the firebase user token every 45 minutes, by checking the timer.
 while 1:
-    quit = raw_input('type q to quit: ')
+    quit = input('type q to quit: ')
     if quit == 'q':
         break
     pass
+
+
 
