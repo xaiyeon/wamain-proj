@@ -186,6 +186,9 @@ class Wamain_User:
                                                     get_fireb_user_uid["users"][0]["displayName"])
             # Setup database
             firebase_database = firebase.database()
+            # Now we create a directory to store the images at, and set it for use later.
+            users_new_dir = create_user_dir(stored_firebase_user.uid)
+            system_user.file_storage_path = users_new_dir
 
         # This part can be part of a task which is FIFO.
         if uploadstate:
@@ -497,10 +500,6 @@ except Exception as e:
 
 # Once we do that, we know for sure a connection is established, since it passed the connection related tasks.
 
-# Now we create a directory to store the images at, and set it for use later.
-users_new_dir = create_user_dir(stored_firebase_user.uid)
-system_user.file_storage_path = users_new_dir
-
 # Test PixyDetection
 # Need to sleep for 30 miliseconds
 sleep(0.30)
@@ -539,6 +538,5 @@ while 1:
     if quit == 'q':
         break
     pass
-
 
 
