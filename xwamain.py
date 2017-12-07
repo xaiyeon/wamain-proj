@@ -499,9 +499,11 @@ except Exception as e:
     sys.exit(0)
 
 # Once we do that, we know for sure a connection is established, since it passed the connection related tasks.
-
-# Test PixyDetection
-# Need to sleep for 30 miliseconds
+# Turn webcam on
+print("Starting webcam and pixycam...")
+system_user.system_webcam(True, False, False)
+# Enable PixyCam, need to sleep for 30 miliseconds
+pixy_init()
 sleep(0.30)
 # Pixycam block detection, to see our signature defined colors within pixel ranges
 blocks = BlockArray(100)
@@ -521,6 +523,8 @@ while demo_test:
         # For every picture that is not consecutive store "0" into list, if consecutive store "_link"
         Wamain_User.stored_image_status_list.append("0")
         demo_test = False
+    else:
+        print("Please smile in front of the sensor.")
 
 # Now that we have a picture, we can upload it.
 system_user.system_rt_database(False, True, False)
@@ -540,7 +544,6 @@ while 1:
     if quit == 'q':
         break
     pass
-
 
 
 
