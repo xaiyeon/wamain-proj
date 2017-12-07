@@ -503,6 +503,8 @@ except Exception as e:
 # Test PixyDetection
 # Need to sleep for 30 miliseconds
 sleep(0.30)
+# Pixycam block detection, to see our signature defined colors within pixel ranges
+blocks = BlockArray(100)
 pixy_detection = pixy_get_blocks(100, blocks)
 
 # Used just for this demo test
@@ -538,5 +540,8 @@ while 1:
     if quit == 'q':
         break
     pass
+
+
+
 
 
