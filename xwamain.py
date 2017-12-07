@@ -143,6 +143,10 @@ class Wamain_User:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
                 webcam.start()
         if takepicsavestate:
+            webcam_list = pygame.camera.list_cameras()
+            if webcam_list:
+                webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
+                webcam.start()
             img = webcam.get_image()
             # We also get the time and store into the list
             localtime = time.asctime(time.localtime(time.time()))
@@ -171,6 +175,9 @@ class Wamain_User:
             Wamain_User.stored_geocoord_list.append(a_point_location)
 
         if stopstate:
+            webcam_list = pygame.camera.list_cameras()
+            if webcam_list:
+                webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
             webcam.stop()
         pass
 
@@ -192,6 +199,8 @@ class Wamain_User:
 
         # This part can be part of a task which is FIFO.
         if uploadstate:
+            # Setup database
+            firebase_database = firebase.database()
             # We will post times and take time
             localtime = time.asctime(time.localtime(time.time()))
             print("Starting an upload task at: " + str(localtime))
@@ -547,6 +556,5 @@ while 1:
     if quit == 'q':
         break
     pass
-
 
 
