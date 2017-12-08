@@ -138,18 +138,19 @@ class Wamain_User:
     # Starts the webcam, to run a state, it must be True or False.
     def system_webcam(self, initstate, takepicsavestate, stopstate):
         if initstate:
-            webcam_list = pygame.camera.list_cameras()
-            if webcam_list:
-                webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
-                webcam.start()
-        if takepicsavestate:
             # Sarting pygame and camera
             pygame.init()
             pygame.camera.init()
             webcam_list = pygame.camera.list_cameras()
             if webcam_list:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
-                webcam.start()
+
+            webcam.start()
+        if takepicsavestate:
+            webcam_list = pygame.camera.list_cameras()
+            if webcam_list:
+                webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
+
             # Wait x seconds
             time.sleep(5)
             img = webcam.get_image()
