@@ -107,6 +107,8 @@ class Wamain_User:
     obj_sysmes_list = []
     obj_photo_list = []
     obj_user_photo_list = []
+    # Variable for storing
+    local_file_storage_path = ""
 
     def __init__(self, name, create_date, location_name, fireb_email, fireb_password, phone_number, system_device_info, file_storage_path):
         self.name = name
@@ -155,18 +157,18 @@ class Wamain_User:
             time.sleep(5)
             # We also get the time and store into the list
             localtime = time.asctime(time.localtime(time.time()))
-            system_user.stored_time_list.append(localtime)
+            Wamain_User.stored_time_list.append(localtime)
             # file_naming
             file_localtime = time.strftime('%Y-%m-%d_%H_%M_%S')
             # Here we name the image with our ways.
-            a_img_title_name = "IMG_" + file_localtime + "_" + str(random.randrange(1, 100000))
+            a_img_title_name = "IMG_" + file_localtime + "_" + str(random.randrange(1, 1000))
             # Lets store that image name too into a list.
             Wamain_User.stored_image_name_list.append(a_img_title_name)
-            print(system_user.file_storage_path)
+            print(Wamain_User.local_file_storage_path)
             # Save image as named in the users UID folder
-            pygame.image.save(img, system_user.file_storage_path + "/" + a_img_title_name + ".jpg")
+            pygame.image.save(img, Wamain_User.local_file_storage_path + "/" + a_img_title_name + ".jpg")
             # Now lets get that stored image, later we make images dynamically named
-            local_img_dir = new_dir + "/" + a_img_title_name + ".jpg"
+            local_img_dir = Wamain_User.local_file_storage_path + "/" + a_img_title_name + ".jpg"
             # Store short_date for search_date, ex: 2017-12-07
             today = datetime.date.today()
             Wamain_User.stored_search_date_list.append(str(today))
@@ -201,7 +203,7 @@ class Wamain_User:
             firebase_database = firebase.database()
             # Now we create a directory to store the images at, and set it for use later.
             users_new_dir = create_user_dir(stored_firebase_user.uid)
-            system_user.file_storage_path = users_new_dir
+            Wamain_User.local_file_storage_path = users_new_dir
 
         # This part can be part of a task which is FIFO.
         if uploadstate:
@@ -564,6 +566,8 @@ while 1:
     if quit == 'q':
         break
     pass
+
+
 
 
 
