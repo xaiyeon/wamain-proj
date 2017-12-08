@@ -74,6 +74,9 @@ from ctypes import *
 class Wamain_Tool:
     def __init__(self, name):
         self.name = name
+        self.twilio_account_sid = "AC9eac86dec2fae88b7c7f7e786e5ac50d"
+        self.twilio_auth_token = "51fd45acaa40b749e5a371140818d2c2"
+        self.twilio_number = "+18582392249"
 
     def firebase_settings(self):
         firebase_config = {
@@ -83,15 +86,6 @@ class Wamain_Tool:
             "storageBucket": "waphotorecon-app.appspot.com"
         }
         return firebase_config
-
-    # Strings: account_sid, auth_token, phonenumber
-    def twilio_settings(self):
-        twilio_config = {
-            "acc_sid": "AC9eac86dec2fae88b7c7f7e786e5ac50d",
-            "auth_tok": "51fd45acaa40b749e5a371140818d2c2",
-            "number": "+18582392249"
-        }
-        return twilio_config
 
 
 # This is for local system running this program only
@@ -228,11 +222,10 @@ def check_devices_connection():
 # This function is for sending a message to the user via Twilio to phone
 def twilio_send_test(system_tool, system_user):
     test_message = "This is a test message for: " + system_user.name + ". For your system: " + system_user.system_device_info
-    twilio_info = system_tool.twilio_settings
-    client = Client(twilio_info['acc_sid'], twilio_info['auth_tok'])
+    client = Client(system_tool.twilio_account_sid, system_tool.twilio_auth_token)
     client.api.account.messages.create(
         to=system_user.phone_number,
-        from_=twilio_info['number'],
+        from_=system_tool.twilio_number,
         body=test_message)
 
 
