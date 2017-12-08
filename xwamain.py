@@ -144,8 +144,7 @@ class Wamain_User:
             webcam_list = pygame.camera.list_cameras()
             if webcam_list:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
-
-            webcam.start()
+                webcam.start()
         if takepicsavestate:
             webcam_list = pygame.camera.list_cameras()
             if webcam_list:
