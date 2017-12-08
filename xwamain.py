@@ -139,8 +139,6 @@ class Wamain_User:
     def system_webcam(self, initstate, takepicsavestate, stopstate):
         if initstate:
             # Sarting pygame and camera
-            pygame.init()
-            pygame.camera.init()
             webcam_list = pygame.camera.list_cameras()
             if webcam_list:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
@@ -523,7 +521,7 @@ print("Starting webcam and pixycam...")
 system_user.system_webcam(True, False, False)
 # Enable PixyCam, need to sleep for 30 miliseconds
 #pixy_init()
-sleep(0.30)
+sleep(10)
 # Pixycam block detection, to see our signature defined colors within pixel ranges
 blocks = BlockArray(100)
 pixy_detection = pixy_get_blocks(100, blocks)
@@ -566,11 +564,6 @@ while 1:
     if quit == 'q':
         break
     pass
-
-
-
-
-
 
 
 
