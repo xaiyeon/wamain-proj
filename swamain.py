@@ -334,7 +334,8 @@ while demo_test:
         today = datetime.date.today()
         # We also need to get geo coords and store, Now lets get the location in latitude, longitude
         try:
-            a_point_location = geocoder.ip('me')
+            a_location = geocoder.ip('me')
+            a_point_location = str(a_location.latlng)
         except Exception as eh:
             a_point_location = "N/A"
             pass
@@ -352,7 +353,7 @@ while demo_test:
             sleep(0.100)
             firebase_storage_upload = firebase_storage.child("users/" + system_user.fireb_uid + "/" + "photos/" + im_na).put(
                 lo_im, firebase_user['idToken'])
-            url_from_storage = firebase_storage.child("users/" + My_FireBase_User.uid + "/" + "photos/" + im_na).get_url(
+            url_from_storage = firebase_storage.child("users/" + system_user.fireb_uid + "/" + "photos/" + im_na).get_url(
                 firebase_storage_upload['downloadTokens'])
             # Now we store that file_path from get url to our image in a list for later, which is used in upload_tasks
             stored_image_url_list.append(url_from_storage)
@@ -372,7 +373,7 @@ while demo_test:
                                            stored_image_status_list, stored_search_date_list,
                                            stored_image_name_list):
             image_status_name = "seed" + random_letter + str(random_number) + st
-            obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid, "An image was captured.",
+            obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid, "Test Demo: An image was captured.",
                                          system_user.system_device_info, "true",
                                          ti, firebase_user['idToken'], image_status_name, da)
             obj_photo = Photo(firebase_user['idToken'], system_user.fireb_uid, system_user.fireb_display_name, imn,
