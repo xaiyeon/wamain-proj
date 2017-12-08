@@ -297,7 +297,7 @@ system_user.file_storage_path = new_dir
 pygame.init()
 pygame.camera.init()
 camera_list = pygame.camera.list_cameras()
-if camlist:
+if camera_list:
     web_cam = pygame.camera.Camera(camera_list[0], (280, 210))
     web_cam.start()
 
