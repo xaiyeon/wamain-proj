@@ -151,8 +151,9 @@ class Wamain_User:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
                 webcam.start()
             # Wait x seconds
-            time.sleep(3)
+            time.sleep(5)
             img = webcam.get_image()
+            time.sleep(5)
             # We also get the time and store into the list
             localtime = time.asctime(time.localtime(time.time()))
             system_user.stored_time_list.append(localtime)
@@ -519,14 +520,15 @@ except Exception as e:
 print("Starting webcam and pixycam...")
 system_user.system_webcam(True, False, False)
 # Enable PixyCam, need to sleep for 30 miliseconds
-#pixy_init()
-#sleep(0.30)
+pixy_init()
+sleep(0.30)
 # Pixycam block detection, to see our signature defined colors within pixel ranges
 blocks = BlockArray(100)
 pixy_detection = pixy_get_blocks(100, blocks)
 
 # Used just for this demo test
 demo_test = True
+alert_once = True
 
 while demo_test:
     sleep(0.30)
@@ -540,7 +542,6 @@ while demo_test:
         Wamain_User.stored_image_status_list.append("0")
         demo_test = False
     else:
-        alert_once = True
         if alert_once:
             print("Please smile in front of the sensor.")
             alert_once = False
@@ -563,7 +564,6 @@ while 1:
     if quit == 'q':
         break
     pass
-
 
 
 
