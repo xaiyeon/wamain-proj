@@ -157,15 +157,20 @@ class Wamain_User:
             time.sleep(5)
             # We also get the time and store into the list
             localtime = time.asctime(time.localtime(time.time()))
-            Wamain_User.stored_time_list.append(localtime)
+            print("Photo captured: " + str(localtime))
+            Wamain_User.stored_time_list.append(str(localtime))
             # file_naming
             file_localtime = time.strftime('%Y-%m-%d_%H_%M_%S')
             # Here we name the image with our ways.
             a_img_title_name = "IMG_" + file_localtime + "_" + str(random.randrange(1, 1000))
             # Lets store that image name too into a list.
+            # Print Messages for Debug
+            print("Storing image_title_name to list.")
             Wamain_User.stored_image_name_list.append(a_img_title_name)
             print(Wamain_User.local_file_storage_path)
             # Save image as named in the users UID folder
+            # Print Messages for Debug
+            print("Saving image into directory.")
             pygame.image.save(img, Wamain_User.local_file_storage_path + "/" + a_img_title_name + ".jpg")
             # Now lets get that stored image, later we make images dynamically named
             local_img_dir = Wamain_User.local_file_storage_path + "/" + a_img_title_name + ".jpg"
@@ -204,6 +209,8 @@ class Wamain_User:
             # Now we create a directory to store the images at, and set it for use later.
             users_new_dir = create_user_dir(stored_firebase_user.uid)
             Wamain_User.local_file_storage_path = users_new_dir
+            # Print Messages for Debug
+            print("Directory: " + Wamain_User.local_file_storage_path)
 
         # This part can be part of a task which is FIFO.
         if uploadstate:
