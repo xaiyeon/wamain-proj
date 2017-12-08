@@ -146,9 +146,12 @@ class Wamain_User:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
                 webcam.start()
         if takepicsavestate:
+            # Debug message
+            print("Webcam is capturing now...")
             webcam_list = pygame.camera.list_cameras()
             if webcam_list:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
+                webcam.start()
 
             # Wait x seconds
             time.sleep(5)
@@ -554,6 +557,8 @@ while demo_test:
             print("Please smile in front of the sensor.")
             alert_once = False
 
+
+print("Upload task next...")
 # Now that we have a picture, we can upload it.
 system_user.system_rt_database(False, True, False)
 
