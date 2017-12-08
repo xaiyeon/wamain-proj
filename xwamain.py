@@ -449,6 +449,8 @@ def check_devices_connection():
         cam.start()
         # Add some delay
         time.sleep(10)
+        img = webcam.get_image()
+        time.sleep(10)
         cam.stop()
     else:
         print("A suitable webcam camera was not found!")
