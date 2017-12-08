@@ -520,7 +520,7 @@ except Exception as e:
 print("Starting webcam and pixycam...")
 system_user.system_webcam(True, False, False)
 # Enable PixyCam, need to sleep for 30 miliseconds
-pixy_init()
+#pixy_init()
 sleep(0.30)
 # Pixycam block detection, to see our signature defined colors within pixel ranges
 blocks = BlockArray(100)
@@ -564,7 +564,6 @@ while 1:
     if quit == 'q':
         break
     pass
-
 
 
 
