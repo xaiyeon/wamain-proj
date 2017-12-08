@@ -449,7 +449,7 @@ def check_devices_connection():
         cam.start()
         # Add some delay
         time.sleep(10)
-        img = webcam.get_image()
+        img = cam.get_image()
         time.sleep(10)
         cam.stop()
     else:
@@ -563,5 +563,13 @@ while 1:
     if quit == 'q':
         break
     pass
+
+
+
+
+
+
+
+
 
 
