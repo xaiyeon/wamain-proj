@@ -163,6 +163,7 @@ class Wamain_User:
             a_img_title_name = "IMG_" + file_localtime + "_" + str(random.randrange(1, 100000))
             # Lets store that image name too into a list.
             Wamain_User.stored_image_name_list.append(a_img_title_name)
+            print(system_user.file_storage_path)
             # Save image as named in the users UID folder
             pygame.image.save(img, system_user.file_storage_path + "/" + a_img_title_name + ".jpg")
             # Now lets get that stored image, later we make images dynamically named
