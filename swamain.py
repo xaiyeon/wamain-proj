@@ -60,6 +60,7 @@ import geocoder
 import socket
 import string
 import datetime
+import threading
 from pygame import camera
 from pygame import image
 from timeit import default_timer as timer
@@ -224,6 +225,109 @@ def check_devices_connection():
     return True
 
 
+# This function is for sending a message to the user via Twilio to phone
+def twilio_send_test(system_tool, system_user):
+    test_message = "This is a test message for: " + system_user.name + ". For your system: " + system_user.system_device_info
+    twilio_info = system_tool.twilio_settings
+    client = Client(twilio_info[0], twilio_info[1])
+    client.api.account.messages.create(
+        to=system_user.phone_number,
+        from_="+18582392249",
+        body=test_message)
+
+
+# This is like a task we must run every 45 minutes to refresh the user token
+def refresh_token_45(firebase_user, firebase_auth):
+    threading.Timer(2700, refresh_token_45).start()
+    ## Refresh user token
+    firebase_user = firebase_auth.refresh(firebase_user['refreshToken'])
+    ## Fresh token
+    firebase_user['idToken']
+
+
+# This function is like or is an upload task. Only gets called when PixyCam isn't busy
+# Pass all the things you need.
+def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage, stored_image_list,
+                            stored_image_name_list, stored_time_list, stored_geocoord_list, stored_search_date_list,
+                            stored_image_status_list, stored_image_url_list):
+    localtime = time.asctime(time.localtime(time.time()))
+    print("Starting an upload task at: " + str(localtime))
+    # Timer for just the upload part
+    start_time_upload = timer()
+    # Start
+    # This part can be separated
+    print("Uploading images to FireBase Storage...")
+    for im_na, lo_im in zip(stored_image_name_list, stored_image_list):
+        # Between operations lets wait a bit
+        sleep(0.100)
+        firebase_storage_upload = firebase_storage.child(
+            "users/" + system_user.fireb_uid + "/" + "photos/" + im_na).put(
+            lo_im, firebase_user['idToken'])
+        url_from_storage = firebase_storage.child("users/" + system_user.fireb_uid + "/" + "photos/" + im_na).get_url(
+            firebase_storage_upload['downloadTokens'])
+        # Now we store that file_path from get url to our image in a list for later, which is used in upload_tasks
+        stored_image_url_list.append(url_from_storage)
+
+    # Once that finished lets empty those lists for memory.
+    stored_image_list.clear()
+
+    # Creating seed name schema
+    random_letter = random.choice(string.ascii_lowercase)
+    random_number = random.randrange(0, 1001)
+
+    # We now go through the list until empty, populating our object datas: photo, user_photo, and sys_messages.
+    # Start looping until lists are empty.
+    # This for loop goes through the five lists to populate our class objects.
+    for ti, im, ge, st, da, imn in zip(stored_time_list, stored_image_url_list,
+                                       stored_geocoord_list,
+                                       stored_image_status_list, stored_search_date_list,
+                                       stored_image_name_list):
+        image_status_name = "seed" + random_letter + str(random_number) + st
+        obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid,
+                                     "Test Demo: An image was captured.",
+                                     system_user.system_device_info, "true",
+                                     ti, firebase_user['idToken'], image_status_name, da)
+        obj_photo = Photo(firebase_user['idToken'], system_user.fireb_uid, system_user.fireb_display_name, imn,
+                          im, ge, system_user.location_name, "A photo that was captured.", ti, "false",
+                          system_user.system_device_info, image_status_name, da)
+        # Now we add all objects to the list for uploading later.
+        system_user.photos.append(obj_photo)
+        system_user.system_messages.append(obj_sys_message)
+
+    # After that process we can empty all other lists.
+    stored_time_list.clear()
+    stored_image_url_list.clear()
+    stored_geocoord_list.clear()
+    stored_image_status_list.clear()
+    stored_search_date_list.clear()
+    stored_image_name_list.clear()
+
+    print("Uploading datas to FireBase Real-Time Database...")
+    # Prepare rest
+    sleep(5)
+    # Now we upload our data/babies!
+    for sys, pho in zip(system_user.system_messages, system_user.photos):
+        # We add some time delays in between each operation, 1 second
+        sleep(1)
+        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).push(
+            sys.message_data(), firebase_user['idToken'])
+        sleep(1)
+        firebase_res2 = firebase_database.child("allphotos").push(pho.photo_data(), firebase_user['idToken'])
+        sleep(1)
+        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).push(pho.photo_data(),
+                                                                                                firebase_user[
+                                                                                                    'idToken'])
+    # Now uploads have been finished we clear those object lists too
+    system_user.system_messages.clear()
+    system_user.photos.clear()
+    # End
+    # Ending time for upload.
+    end_time_upload = timer()
+    # Elapsed time for the demo.
+    elapsed_upload_time = end_time_upload - start_time_upload
+    print("The upload task took: " + str(elapsed_upload_time) + " seconds.")
+
+
 # ---- PROGRAM STARTS
 # ---- After this line is where the actual program will start running!
 
@@ -243,7 +347,7 @@ stored_image_url_list = []
 
 demo_test = True
 alert_once = True
-
+continue_check = True
 
 # We start the system now. The first run is a demo-test to verify it's working.
 # Once all initial set-up is finished we will time it.
@@ -292,6 +396,10 @@ else:
     print("stored_photos is already there.")
 system_user.file_storage_path = new_dir
 
+print("Test Demo is now starting.")
+# Time to time the demo.
+start_time_demo = timer()
+
 # Now we can start the pygame web cam and pixycam.
 # Sarting pygame and camera
 pygame.init()
@@ -307,6 +415,12 @@ pixy_init()
 sleep(5)
 # Pixycam block detection, to see our signature defined colors within pixel ranges
 pixy_blocks = BlockArray(100)
+
+# We call our refresh task here, which is scheduled every 45 minutes
+refresh_token_45(firebase_user, firebase_auth)
+
+# Send the user a test message
+twilio_send_test(system_tool, system_user)
 
 while demo_test:
     # Is a count of detected objects in a frame from pixy cam
@@ -346,70 +460,11 @@ while demo_test:
         stored_image_list.append(local_img_dir)
         stored_search_date_list.append(str(today))
         stored_geocoord_list.append(a_point_location)
-        print("Uploading images to FireBase Storage...")
 
-        for im_na, lo_im in zip(stored_image_name_list, stored_image_list):
-            # Between operations lets wait a bit
-            sleep(0.100)
-            firebase_storage_upload = firebase_storage.child("users/" + system_user.fireb_uid + "/" + "photos/" + im_na).put(
-                lo_im, firebase_user['idToken'])
-            url_from_storage = firebase_storage.child("users/" + system_user.fireb_uid + "/" + "photos/" + im_na).get_url(
-                firebase_storage_upload['downloadTokens'])
-            # Now we store that file_path from get url to our image in a list for later, which is used in upload_tasks
-            stored_image_url_list.append(url_from_storage)
-
-        # Once that finished lets empty those lists for memory.
-        stored_image_list.clear()
-
-        # Creating seed name schema
-        random_letter = random.choice(string.ascii_lowercase)
-        random_number = random.randrange(0, 1001)
-
-        # We now go through the list until empty, populating our object datas: photo, user_photo, and sys_messages.
-        # Start looping until lists are empty.
-        # This for loop goes through the five lists to populate our class objects.
-        for ti, im, ge, st, da, imn in zip(stored_time_list, stored_image_url_list,
-                                           stored_geocoord_list,
-                                           stored_image_status_list, stored_search_date_list,
-                                           stored_image_name_list):
-            image_status_name = "seed" + random_letter + str(random_number) + st
-            obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid, "Test Demo: An image was captured.",
-                                         system_user.system_device_info, "true",
-                                         ti, firebase_user['idToken'], image_status_name, da)
-            obj_photo = Photo(firebase_user['idToken'], system_user.fireb_uid, system_user.fireb_display_name, imn,
-                               im, ge, system_user.location_name, "A photo that was captured.", ti, "false",
-                               system_user.system_device_info, image_status_name, da)
-            # Now we add all objects to the list for uploading later.
-            system_user.photos.append(obj_photo)
-            system_user.system_messages.append(obj_sys_message)
-
-        # After that process we can empty all other lists.
-        stored_time_list.clear()
-        stored_image_url_list.clear()
-        stored_geocoord_list.clear()
-        stored_image_status_list.clear()
-        stored_search_date_list.clear()
-        stored_image_name_list.clear()
-
-        print("Uploading datas to FireBase Real-Time Database...")
-        # Prepare rest
-        sleep(5)
-
-        # Now we upload our data/babies!
-        for sys, pho in zip(system_user.system_messages, system_user.photos):
-            # We add some time delays in between each operation, 1 second
-            sleep(1)
-            firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).push(
-                sys.message_data(), firebase_user['idToken'])
-            sleep(1)
-            firebase_res2 = firebase_database.child("allphotos").push(pho.photo_data(), firebase_user['idToken'])
-            sleep(1)
-            firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).push(pho.photo_data(),
-                                                                                                    firebase_user['idToken'])
-        # Now uploads have been finished we clear those object lists too
-        system_user.system_messages.clear()
-        system_user.photos.clear()
-
+        # Call upload task function
+        upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage,
+                                stored_image_list, stored_image_name_list, stored_time_list, stored_geocoord_list,
+                                stored_search_date_list, stored_image_status_list, stored_image_url_list)
 
         demo_test = False
 
@@ -420,4 +475,24 @@ while demo_test:
 
 
 print("Demo has finished!")
+# Ending time for demo.
+end_time_demo = timer()
+# Elapsed time for the demo.
+elapsed_demo_time = end_time_demo - start_time_demo
+print("The test demo took: " + str(elapsed_demo_time) + " seconds!")
+
+while continue_check:
+    continue_on = input('To start the system enter s or q to quit: ')
+    if continue_on is 's':
+        continue_check = False
+    else:
+        pass
+    if continue_on is 'q':
+        # We quit the program or exit.
+        print("Quitting...")
+        sys.exit(0)
+    else:
+        pass
+
+print("System is up and running! Enjoy.")
 
