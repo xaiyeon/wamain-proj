@@ -164,7 +164,7 @@ class Wamain_User:
             # Lets store that image name too into a list.
             Wamain_User.stored_image_name_list.append(a_img_title_name)
             # Save image as named in the users UID folder
-            pygame.image.save(img, self.file_storage_path + "/" + a_img_title_name + ".jpg")
+            pygame.image.save(img, system_user.file_storage_path + "/" + a_img_title_name + ".jpg")
             # Now lets get that stored image, later we make images dynamically named
             local_img_dir = new_dir + "/" + a_img_title_name + ".jpg"
             # Store short_date for search_date, ex: 2017-12-07
