@@ -86,11 +86,11 @@ class Wamain_Tool:
 
     # Strings: account_sid, auth_token, phonenumber
     def twilio_settings(self):
-        twilio_config = [
-            "AC9eac86dec2fae88b7c7f7e786e5ac50d",
-            "51fd45acaa40b749e5a371140818d2c2",
-            "+18582392249"
-        ]
+        twilio_config = {
+            "acc_sid": "AC9eac86dec2fae88b7c7f7e786e5ac50d",
+            "auth_tok": "51fd45acaa40b749e5a371140818d2c2",
+            "number": "+18582392249"
+        }
         return twilio_config
 
 
@@ -229,10 +229,10 @@ def check_devices_connection():
 def twilio_send_test(system_tool, system_user):
     test_message = "This is a test message for: " + system_user.name + ". For your system: " + system_user.system_device_info
     twilio_info = system_tool.twilio_settings
-    client = Client(twilio_info[0], twilio_info[1])
+    client = Client(twilio_info['acc_sid'], twilio_info['auth_tok'])
     client.api.account.messages.create(
         to=system_user.phone_number,
-        from_="+18582392249",
+        from_=twilio_info['number'],
         body=test_message)
 
 
