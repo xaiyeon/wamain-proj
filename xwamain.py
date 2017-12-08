@@ -147,8 +147,8 @@ class Wamain_User:
             if webcam_list:
                 webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
                 webcam.start()
-            # Wait 1 seconds
-            sleep(1)
+            # Wait 5 seconds
+            sleep(5)
             img = webcam.get_image()
             # We also get the time and store into the list
             localtime = time.asctime(time.localtime(time.time()))
