@@ -148,7 +148,7 @@ class Wamain_User:
             pygame.camera.init()
             webcam_list = pygame.camera.list_cameras()
             if webcam_list:
-                webcam = pygame.camera.Camera(webcam_list[0], (280, 210))
+                webcam = pygame.camera.Camera(webcam_list[1], (280, 210))
                 webcam.start()
             # Wait x seconds
             time.sleep(3)
