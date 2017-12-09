@@ -229,6 +229,15 @@ def twilio_send_test(system_tool, system_user):
         body=test_message)
 
 
+def twilio_send_busy(system_tool, system_user):
+    localtime = time.asctime(time.localtime(time.time()))
+    test_message = "This time was busy: " + system_user.name + str(localtime) + ". For your system: " + system_user.system_device_info
+    client = Client(system_tool.twilio_account_sid, system_tool.twilio_auth_token)
+    client.api.account.messages.create(
+        to=system_user.phone_number,
+        from_=system_tool.twilio_number,
+        body=test_message)
+
 # This is like a task we must run every 45 minutes to refresh the user token
 def refresh_token_45(firebase_user, firebase_auth):
     threading.Timer(2700, refresh_token_45).start()
@@ -341,6 +350,7 @@ stored_image_url_list = []
 demo_test = True
 alert_once = True
 continue_check = True
+run_system = True
 
 # We start the system now. The first run is a demo-test to verify it's working.
 # Once all initial set-up is finished we will time it.
@@ -476,16 +486,85 @@ print("The test demo took: " + str(elapsed_demo_time) + " seconds!")
 
 while continue_check:
     continue_on = input('To start the system enter s or q to quit: ')
-    if continue_on is 's':
+    if continue_on == "s":
         continue_check = False
     else:
         pass
-    if continue_on is 'q':
+    if continue_on == "q":
         # We quit the program or exit.
-        print("Quitting...")
-        sys.exit(0)
+        web_cam.stop()
+        run_system = False
+        continue_check = False
     else:
         pass
 
-print("System is up and running! Enjoy.")
+# ---- Now we actually put the code here for continuous usage!
+# We upload the photos, with whatever the pixycam and webcam has as soon as there is no detection anymore.
+# TODO: We can also add in more daily notifications (send to user via phone message)
+# if the day was busy or not today based on taken images.
+detection_count = 0
+if run_system:
+    print("System is up and running! Enjoy.")
 
+# Explain: Basically we take picture if we detect something and then wait 5 seconds (which you can change).
+# If there is nothing, idle, we upload all the images.
+while run_system:
+    # Is a count of detected objects in a frame from pixy cam
+    # Make it third a second 0.3, which is enough
+    # For this purpose, I'll change to 5 seconds.
+    sleep(5)
+    pixy_detection = pixy_get_blocks(100, pixy_blocks)
+    if pixy_detection > 0:
+        print("An object or person of interest is detected! Taking picture...")
+        # Take a picture and store it locally first.
+        img = web_cam.get_image()
+        # Image status
+        image_status = "0"
+        # We also get the time and store into the list
+        localtime = time.asctime(time.localtime(time.time()))
+        print("Photo captured: " + str(localtime))
+        # file_naming
+        file_localtime = time.strftime('%Y-%m-%d_%H_%M_%S')
+        # Here we name the image with our ways.
+        a_img_title_name = "IMG_" + file_localtime + "_" + str(random.randrange(1, 1000))
+        # Save image to the user's folder
+        pygame.image.save(img, system_user.file_storage_path + "/" + a_img_title_name + ".jpg")
+        # Now we get that same full path for the image
+        local_img_dir = system_user.file_storage_path + "/" + a_img_title_name + ".jpg"
+        # Store short_date for search_date, ex: 2017-12-07
+        today = datetime.date.today()
+        # We also need to get geo coords and store, Now lets get the location in latitude, longitude
+        try:
+            a_location = geocoder.ip('me')
+            a_point_location = str(a_location.latlng)
+        except Exception as eh:
+            a_point_location = "N/A"
+            pass
+
+        stored_image_status_list.append(image_status)
+        stored_time_list.append(localtime)
+        stored_image_name_list.append(a_img_title_name)
+        stored_image_list.append(local_img_dir)
+        stored_search_date_list.append(str(today))
+        stored_geocoord_list.append(a_point_location)
+        detection_count += 1
+
+    else:
+        # If nothing is happening upload the images
+        # First we check if there is nothing
+        if detection_count >= 1:
+            # Call upload task function
+            upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage,
+                                    stored_image_list, stored_image_name_list, stored_time_list, stored_geocoord_list,
+                                    stored_search_date_list, stored_image_status_list, stored_image_url_list)
+            # For a busy day
+            if detection_count >= 25:
+                twilio_send_busy(system_tool, system_user)
+            # Then set it back to 0
+            detection_count = 0
+        else:
+            pass
+
+
+# This gets printed when user doesn't run system
+print("Quitting...")
