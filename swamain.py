@@ -260,8 +260,7 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
     # This part can be separated
     print("Uploading images to FireBase Storage...")
     for im_na, lo_im in zip(stored_image_name_list, stored_image_list):
-        # Between operations lets wait a bit
-        sleep(0.100)
+        # Between operations lets wait a bit, no
         firebase_storage_upload = firebase_storage.child(
             "users/" + system_user.fireb_uid + "/" + "photos/" + im_na).put(
             lo_im, firebase_user['idToken'])
@@ -310,16 +309,16 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
 
     print("Uploading datas to FireBase Real-Time Database...")
     # Prepare rest
-    sleep(5)
+    sleep(2)
     # Now we upload our data/babies!
     for sys, pho in zip(system_user.system_messages, system_user.photos):
         # We add some time delays in between each operation, 1 second
-        sleep(1)
+        #sleep(1)
         firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).push(
             sys.message_data(), firebase_user['idToken'])
-        sleep(1)
+        #sleep(1)
         firebase_res2 = firebase_database.child("allphotos").push(pho.photo_data(), firebase_user['idToken'])
-        sleep(1)
+        #sleep(1)
         firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).push(pho.photo_data(),
                                                                                                 firebase_user[
                                                                                                     'idToken'])
@@ -515,6 +514,14 @@ while continue_check:
 # if the day was busy or not today based on taken images.
 detection_count = 0
 if run_system:
+    # Clear our lists
+    stored_image_list.clear()
+    stored_time_list.clear()
+    stored_image_url_list.clear()
+    stored_geocoord_list.clear()
+    stored_image_status_list.clear()
+    stored_search_date_list.clear()
+    stored_image_name_list.clear()
     print("System is up and running! Enjoy.")
 
 # Explain: Basically we take picture if we detect something and then wait 5 seconds (which you can change).
@@ -569,6 +576,14 @@ while run_system:
             upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage,
                                     stored_image_list, stored_image_name_list, stored_time_list, stored_geocoord_list,
                                     stored_search_date_list, stored_image_status_list, stored_image_url_list, demo_message_check)
+            # Then clear lists again
+            stored_image_list.clear()
+            stored_time_list.clear()
+            stored_image_url_list.clear()
+            stored_geocoord_list.clear()
+            stored_image_status_list.clear()
+            stored_search_date_list.clear()
+            stored_image_name_list.clear()
             # For a busy day
             if detection_count >= 25:
                 twilio_send_busy(system_tool, system_user)
