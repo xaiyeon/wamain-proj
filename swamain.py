@@ -408,6 +408,12 @@ print("Test Demo is now starting.")
 # Time to time the demo.
 start_time_demo = timer()
 
+# Now we start the thread for the pixy cam
+pixy_init()
+
+# Adding a little delay in between powering on the devices.
+sleep(5)
+
 # Now we can start the pygame web cam and pixycam.
 # Sarting pygame and camera
 pygame.init()
@@ -417,8 +423,7 @@ if camera_list:
     web_cam = pygame.camera.Camera(camera_list[0], (280, 210))
     web_cam.start()
 
-# Now we start the thread for the pixy cam
-pixy_init()
+
 # Wait for devices to turn on
 sleep(5)
 # Pixycam block detection, to see our signature defined colors within pixel ranges
