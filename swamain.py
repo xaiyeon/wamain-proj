@@ -2,7 +2,7 @@
     x-wa-main and s-wa-main lead programmed by Royce Aquino,
     assistant programmer is JP A.
 
-    Last Edit Date: Dec 7, 2017
+    Last Edit Date: Dec 9, 2017
 
     About s-wa-main:
     x-wa-main kept crashing due to Segmentation Fault errors, this is due to the limited memory space
