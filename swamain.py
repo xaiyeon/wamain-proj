@@ -251,7 +251,7 @@ def refresh_token_45(firebase_user, firebase_auth):
 # Pass all the things you need.
 def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage, stored_image_list,
                             stored_image_name_list, stored_time_list, stored_geocoord_list, stored_search_date_list,
-                            stored_image_status_list, stored_image_url_list):
+                            stored_image_status_list, stored_image_url_list, demo_message_check):
     localtime = time.asctime(time.localtime(time.time()))
     print("Starting an upload task at: " + str(localtime))
     # Timer for just the upload part
@@ -277,6 +277,11 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
     random_letter = random.choice(string.ascii_lowercase)
     random_number = random.randrange(0, 1001)
 
+    if demo_message_check:
+        log_message = "Test Demo: An image was captured."
+    else:
+        log_message = "System: An image was captured."
+
     # We now go through the list until empty, populating our object datas: photo, user_photo, and sys_messages.
     # Start looping until lists are empty.
     # This for loop goes through the five lists to populate our class objects.
@@ -285,8 +290,7 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
                                        stored_image_status_list, stored_search_date_list,
                                        stored_image_name_list):
         image_status_name = "seed" + random_letter + str(random_number) + st
-        obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid,
-                                     "Test Demo: An image was captured.",
+        obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid, log_message,
                                      system_user.system_device_info, "true",
                                      ti, firebase_user['idToken'], image_status_name, da)
         obj_photo = Photo(firebase_user['idToken'], system_user.fireb_uid, system_user.fireb_display_name, imn,
@@ -351,6 +355,7 @@ demo_test = True
 alert_once = True
 continue_check = True
 run_system = True
+demo_message_check = True
 
 # We start the system now. The first run is a demo-test to verify it's working.
 # Once all initial set-up is finished we will time it.
@@ -467,9 +472,10 @@ while demo_test:
         # Call upload task function
         upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage,
                                 stored_image_list, stored_image_name_list, stored_time_list, stored_geocoord_list,
-                                stored_search_date_list, stored_image_status_list, stored_image_url_list)
+                                stored_search_date_list, stored_image_status_list, stored_image_url_list, demo_message_check)
 
         demo_test = False
+        demo_message_check = False
 
     else:
         if alert_once:
@@ -511,9 +517,10 @@ if run_system:
 while run_system:
     # Is a count of detected objects in a frame from pixy cam
     # Make it third a second 0.3, which is enough
-    # For this purpose, I'll change to 5 seconds.
-    sleep(5)
+    # For this purpose, I'll change to 5 or 1 seconds.
+    sleep(1)
     pixy_detection = pixy_get_blocks(100, pixy_blocks)
+    sleep(0.3)
     if pixy_detection > 0:
         print("An object or person of interest is detected! Taking picture...")
         # Take a picture and store it locally first.
@@ -556,14 +563,17 @@ while run_system:
             # Call upload task function
             upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage,
                                     stored_image_list, stored_image_name_list, stored_time_list, stored_geocoord_list,
-                                    stored_search_date_list, stored_image_status_list, stored_image_url_list)
+                                    stored_search_date_list, stored_image_status_list, stored_image_url_list, demo_message_check)
             # For a busy day
             if detection_count >= 25:
                 twilio_send_busy(system_tool, system_user)
+            else:
+                pass
             # Then set it back to 0
             detection_count = 0
         else:
             pass
+        pass
 
 
 # This gets printed when user doesn't run system
