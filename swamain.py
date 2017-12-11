@@ -2,7 +2,7 @@
     x-wa-main and s-wa-main lead programmed by Royce Aquino,
     assistant programmer is JP A.
 
-    Last Edit Date: Dec 9, 2017
+    Last Edit Date: Dec 11, 2017
 
     About s-wa-main:
     x-wa-main kept crashing due to Segmentation Fault errors, this is due to the limited memory space
@@ -83,8 +83,7 @@ class Wamain_Tool:
             "apiKey": "AIzaSyD2vMTSufNIHH0RxWiDGfKkoFWPKKMRYiQ",
             "authDomain": "waphotorecon-app.firebaseapp.com",
             "databaseURL": "https://waphotorecon-app.firebaseio.com",
-            "storageBucket": "waphotorecon-app.appspot.com",
-            "serviceAccount": "~/mywaproj/google-services.json"
+            "storageBucket": "waphotorecon-app.appspot.com"
         }
         return firebase_config
 
@@ -325,12 +324,19 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
     for sys, pho, uid in zip(system_user.system_messages, system_user.photos, stored_UID_list):
         # We add some time delays in between each operation, 1 second
         #sleep(1)
-        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).child(uid).set(
+        # We will try pushing the data then getting it and updating the ID
+        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).push(
             sys.message_data())
+        user_message_id = firebase_res1.get()
+        firebase_database.child("usermessagelogs").child(system_user.fireb_uid).child(user_message_id).update(
+            {"sys_message_id": user_message_id})
         #sleep(1)
-        firebase_res2 = firebase_database.child("allphotos").child(uid).set(pho.photo_data())
+        firebase_res2 = firebase_database.child("allphotos").push(pho.photo_data())
+        all_photo_id = firebase_res2.get()
+        firebase_database.child("allphotos").child(all_photo_id).update({"photo_id": all_photo_id})
         #sleep(1)
-        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).child(uid).set(pho.photo_data())
+        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).push(pho.photo_data())
+        firebase_database.child("userphotos").child(system_user.fireb_uid).child(all_photo_id).update({"photo_id": all_photo_id})
 
     # Now uploads have been finished we clear those object lists too
     system_user.system_messages.clear()
