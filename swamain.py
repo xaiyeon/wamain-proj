@@ -83,7 +83,8 @@ class Wamain_Tool:
             "apiKey": "AIzaSyD2vMTSufNIHH0RxWiDGfKkoFWPKKMRYiQ",
             "authDomain": "waphotorecon-app.firebaseapp.com",
             "databaseURL": "https://waphotorecon-app.firebaseio.com",
-            "storageBucket": "waphotorecon-app.appspot.com"
+            "storageBucket": "waphotorecon-app.appspot.com",
+            "serviceAccount": "root/mywaproj/google-services.json"
         }
         return firebase_config
 
