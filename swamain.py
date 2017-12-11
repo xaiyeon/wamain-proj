@@ -325,18 +325,13 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
         # We add some time delays in between each operation, 1 second
         #sleep(1)
         # We will try pushing the data then getting it and updating the ID
-        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).push(
-            sys.message_data())
-        user_message_id = firebase_res1.get()
-        firebase_database.child("usermessagelogs").child(system_user.fireb_uid).child(user_message_id).update(
-            {"sys_message_id": user_message_id})
+        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).child(uid).set(
+            sys.message_data(), firebase_user['idToken'])
         #sleep(1)
-        firebase_res2 = firebase_database.child("allphotos").push(pho.photo_data())
-        all_photo_id = firebase_res2.get()
-        firebase_database.child("allphotos").child(all_photo_id).update({"photo_id": all_photo_id})
+        firebase_res2 = firebase_database.child("allphotos").child(uid).set(pho.photo_data(), firebase_user['idToken'])
         #sleep(1)
-        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).push(pho.photo_data())
-        firebase_database.child("userphotos").child(system_user.fireb_uid).child(all_photo_id).update({"photo_id": all_photo_id})
+        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).child(uid).set(pho.photo_data(), firebase_user['idToken'])
+
 
     # Now uploads have been finished we clear those object lists too
     system_user.system_messages.clear()
