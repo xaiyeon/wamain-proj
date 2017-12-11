@@ -252,6 +252,8 @@ def refresh_token_45(firebase_user, firebase_auth):
 def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_database, firebase_storage, stored_image_list,
                             stored_image_name_list, stored_time_list, stored_geocoord_list, stored_search_date_list,
                             stored_image_status_list, stored_image_url_list, demo_message_check):
+    # This list is for creating UID for our objects to upload! It's very important.
+    stored_UID_list = []
     localtime = time.asctime(time.localtime(time.time()))
     print("Starting an upload task at: " + str(localtime))
     # Timer for just the upload part
@@ -288,16 +290,24 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
                                        stored_geocoord_list,
                                        stored_image_status_list, stored_search_date_list,
                                        stored_image_name_list):
+        # we need a new key each time
+        u_letter = random.choice(string.ascii_lowercase)
+        u_number = random.randrange(0, 1001)
+        uu_number = random.randrange(0,9999)
+        UID = "R" + random_letter + str(u_number) + u_letter + str(uu_number) + da
         image_status_name = "seed" + random_letter + str(random_number) + st
-        obj_sys_message = SysMessage(firebase_user['idToken'], system_user.fireb_uid, log_message,
+        obj_sys_message = SysMessage(UID, system_user.fireb_uid, log_message,
                                      system_user.system_device_info, "true",
                                      ti, firebase_user['idToken'], image_status_name, da)
-        obj_photo = Photo(firebase_user['idToken'], system_user.fireb_uid, system_user.fireb_display_name, imn,
+        obj_photo = Photo(UID, system_user.fireb_uid, system_user.fireb_display_name, imn,
                           im, ge, system_user.location_name, "A photo that was captured.", ti, "false",
                           system_user.system_device_info, image_status_name, da)
         # Now we add all objects to the list for uploading later.
         system_user.photos.append(obj_photo)
         system_user.system_messages.append(obj_sys_message)
+        # save the UID for next step
+        stored_UID_list.append(UID)
+
 
     # After that process we can empty all other lists.
     stored_time_list.clear()
@@ -311,20 +321,20 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
     # Prepare rest
     sleep(2)
     # Now we upload our data/babies!
-    for sys, pho in zip(system_user.system_messages, system_user.photos):
+    for sys, pho, uid in zip(system_user.system_messages, system_user.photos, stored_UID_list):
         # We add some time delays in between each operation, 1 second
         #sleep(1)
-        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).push(
-            sys.message_data(), firebase_user['idToken'])
+        firebase_res1 = firebase_database.child("usermessagelogs").child(system_user.fireb_uid).child(uid).set(
+            sys.message_data())
         #sleep(1)
-        firebase_res2 = firebase_database.child("allphotos").push(pho.photo_data(), firebase_user['idToken'])
+        firebase_res2 = firebase_database.child("allphotos").child(uid).set(pho.photo_data())
         #sleep(1)
-        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).push(pho.photo_data(),
-                                                                                                firebase_user[
-                                                                                                    'idToken'])
+        firebase_res3 = firebase_database.child("userphotos").child(system_user.fireb_uid).child(uid).set(pho.photo_data())
+
     # Now uploads have been finished we clear those object lists too
     system_user.system_messages.clear()
     system_user.photos.clear()
+    stored_UID_list.clear()
     # End
     # Ending time for upload.
     end_time_upload = timer()
@@ -597,5 +607,4 @@ while run_system:
 
 
 # This gets printed when user doesn't run system
-# Latest
 print("Quitting...")
