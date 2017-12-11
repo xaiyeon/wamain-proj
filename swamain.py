@@ -293,8 +293,8 @@ def upload_to_firebase_task(system_user, firebase_user, firebase_auth, firebase_
         # we need a new key each time
         u_letter = random.choice(string.ascii_lowercase)
         u_number = random.randrange(0, 1001)
-        uu_number = random.randrange(0,9999)
-        UID = "R" + random_letter + str(u_number) + u_letter + str(uu_number) + da
+        uu_number = random.randrange(0, 9999)
+        UID = "R" + random_letter + str(u_number) + u_letter + str(uu_number) + datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         image_status_name = "seed" + random_letter + str(random_number) + st
         obj_sys_message = SysMessage(UID, system_user.fireb_uid, log_message,
                                      system_user.system_device_info, "true",
