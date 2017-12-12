@@ -406,7 +406,7 @@ firebase_storage = firebase.storage()
 cur_dir = os.getcwd()
 # We get absolute path from root
 abs_dir = os.path.abspath(cur_dir)
-new_path = "/" + "stored_photos" + "/" "/" + "users" + "/" + system_user.fireb_display_name
+new_path = "/" + "stored_photos" + "/" + "users" + "/" + system_user.fireb_display_name
 new_dir = abs_dir + new_path
 if not os.path.exists(new_dir):
     os.makedirs(new_dir)
@@ -542,9 +542,8 @@ while run_system:
     # Is a count of detected objects in a frame from pixy cam
     # Make it third a second 0.3, which is enough
     # For this purpose, I'll change to 5 or 1 seconds.
-    sleep(1)
+    sleep(0.6)
     pixy_detection = pixy_get_blocks(100, pixy_blocks)
-    sleep(0.3)
     if pixy_detection > 0:
         print("An object or person of interest is detected! Taking picture...")
         # Take a picture and store it locally first.
@@ -597,7 +596,7 @@ while run_system:
             stored_search_date_list.clear()
             stored_image_name_list.clear()
             # For a busy day
-            if detection_count >= 25:
+            if detection_count >= 10:
                 twilio_send_busy(system_tool, system_user)
             else:
                 pass
