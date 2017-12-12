@@ -4,6 +4,8 @@
 
     Last Edit Date: Dec 11, 2017
 
+    Everything below may be out-dated.
+
     About s-wa-main:
     x-wa-main kept crashing due to Segmentation Fault errors, this is due to the limited memory space
     on the BeagleBone Black Wireless. This program is a simplified version that works.
@@ -26,8 +28,8 @@
     After the test demo, you will want to name the location and log-in to your account you signed up with on the
     Android application.
 
-    Files on the micro-computer are stored under users/ the user id / folder with year month / day of month /
-    your_image.jpg
+    Files on the micro-computer are stored under stored_photos followed by sub-directories that seperate unique user's
+    photos and such.
 
     That's it.
 
