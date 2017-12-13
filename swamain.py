@@ -544,7 +544,7 @@ while run_system:
     # Is a count of detected objects in a frame from pixy cam
     # Make it third a second 0.3, which is enough
     # For this purpose, I'll change to 5 or 1 seconds.
-    sleep(0.6)
+    sleep(1)
     pixy_detection = pixy_get_blocks(100, pixy_blocks)
     if pixy_detection > 0:
         print("An object or person of interest is detected! Taking picture...")
