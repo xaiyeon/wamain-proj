@@ -407,7 +407,7 @@ firebase_storage = firebase.storage()
 # Testing if we can create a UID with FireBase
 
 # String UID = databasePhoto.push().getKey();
-genUID = firebase_database.push().key()
+genUID = firebase_database.child("allphotos").push().key()
 print(str(genUID))
 
 
