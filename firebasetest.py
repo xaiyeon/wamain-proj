@@ -76,13 +76,13 @@ from ctypes import *
 class Wamain_Tool:
     def __init__(self, name):
         self.name = name
-        self.twilio_account_sid = "AC9eac86dec2fae88b7c7f7e786e5ac50d"
+        self.twilio_account_sid = "AC9eac86dechby797f7e786e5ac50d"
         self.twilio_auth_token = "51fd45acaa40b749e5a371140818d2c2"
         self.twilio_number = "+18582392249"
 
     def firebase_settings(self):
         firebase_config = {
-            "apiKey": "AIzaSyD2vMTSufNIHH0RxWiDGfKkoFWPKKMRYiQ",
+            "apiKey": "AIzaSyD2vMFF47v0RxWiDGfKkoFWPKKMRYiQ",
             "authDomain": "waphotorecon-app.firebaseapp.com",
             "databaseURL": "https://waphotorecon-app.firebaseio.com",
             "storageBucket": "waphotorecon-app.appspot.com"
