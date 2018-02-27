@@ -81,7 +81,7 @@ start_time = timer()
 
 ## Below is FireBase credentials
 config = {
-	"apiKey": "AIzaSyD2vMTSufNIHH0RxWiDGfKkoFWPKKMRYiQ",
+	"apiKey": "AIzaSyD2vMTSufurdr57gKkoFWPKKMRYiQ",
 	"authDomain": "waphotorecon-app.firebaseapp.com",
 	"databaseURL": "https://waphotorecon-app.firebaseio.com",
 	"storageBucket": "waphotorecon-app.appspot.com"
