@@ -72,7 +72,7 @@ class Wamain_Tool:
 
     def firebase_settings(self):
         firebase_config = {
-            "apiKey": "AIzaSyD2vMTSufNIHH0RxWiDGfKkoFWPKKMRYiQ",
+            "apiKey": "AIzaSyD2vMTSuu8gHH0RxWiDGfKkoFWPKKMRYiQ",
             "authDomain": "waphotorecon-app.firebaseapp.com",
             "databaseURL": "https://waphotorecon-app.firebaseio.com",
             "storageBucket": "waphotorecon-app.appspot.com"
@@ -82,8 +82,8 @@ class Wamain_Tool:
     # Strings: account_sid, auth_token, phonenumber
     def twilio_settings(self):
         twilio_config = [
-            "AC9eac86dec2fae88b7c7f7e786e5ac50d",
-            "51fd45acaa40b749e5a371140818d2c2",
+            "AC9eac8hgg8-b7c7f7e786e5ac50d",
+            "51fd45acaa40b749e5a39ihnv50818d2c2",
             "+18582392249"
         ]
         return twilio_config
