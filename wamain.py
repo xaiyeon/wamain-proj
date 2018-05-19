@@ -81,7 +81,7 @@ start_time = timer()
 
 ## Below is FireBase credentials
 config = {
-	"apiKey": "AIzaSyD2vMTSufurdr57gKkoFWPKKMRYiQ",
+	"apiKey": "",
 	"authDomain": "waphotorecon-app.firebaseapp.com",
 	"databaseURL": "https://waphotorecon-app.firebaseio.com",
 	"storageBucket": "waphotorecon-app.appspot.com"
@@ -128,7 +128,7 @@ fireb_res = db.child("testusers").child("testing").push(data, fireb_user['idToke
 print("FireBase test data success!")
 
 ## Below is Twilio credentials
-account_sid = "AC9eac86dec2fae88b7c7f7e786e5ac50d"
+account_sid = ""
 auth_token = "51fd45acaa40b749e5a371140818d2c2"
 
 client = Client(account_sid, auth_token)
