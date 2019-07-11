@@ -1,3 +1,5 @@
+Yes, the git commit messages are horrible. I would not commit that way in production.
+
 WA Photo Recon System.
 
 This program only works on Python3.5+
